@@ -31,7 +31,15 @@ class SnakeGame:
                              random.randrange(1, (self.display_height // 10)) * 10]
         return new_collision_obj
 
-    
+    def set_game_difficulty(self, selected: Tuple, value: Any):
+        if value == 1:
+            self.difficulty = 25
+        elif value == 2:
+            self.difficulty = 50
+        elif value == 3:
+            self.difficulty = 100
+        else:
+            self.difficulty = 25
 
     
 
