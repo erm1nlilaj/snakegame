@@ -31,9 +31,23 @@ class SnakeGame:
                              random.randrange(1, (self.display_height // 10)) * 10]
         return new_collision_obj
 
-   
+    def set_game_difficulty(self, selected: Tuple, value: Any):
+        if value == 1:
+            self.difficulty = 25
+        elif value == 2:
+            self.difficulty = 50
+        elif value == 3:
+            self.difficulty = 100
+        else:
+            self.difficulty = 25
 
-    
+    def show_game_score(self, font, size, game_score):
+        game_score_font = pygame.font.SysFont(font, size)
+        game_score_surface = game_score_font.render((self.player_name + "'s Game Score: " + str(game_score)),
+                                                    True, self.brown)
+        game_score_rect = game_score_surface.get_rect()
+        game_score_rect.midtop = (self.display_height, 15)
+        self.win.blit(game_score_surface, game_score_rect)
 
     def show_collision_obj(self, collision_obj_position, snake_width, snake_height):
         collision_obj_rect = pygame.Rect(collision_obj_position[0], collision_obj_position[1], snake_width, snake_height)
@@ -63,7 +77,13 @@ class SnakeGame:
     def replay_game(self):
         self.game_loop()
 
-    
+    def show_end_screen(self, game_score):
+        end_menu = pygame_menu.Menu(width=self.display_width, height=self.display_height, title='Game Over',
+                                    theme=pygame_menu.themes.THEME_ORANGE)
+        end_menu.add.label("Your Score:" + str(game_score))
+        end_menu.add.button("Replay Game", self.replay_game)
+        end_menu.add.button("Quit Game", pygame_menu.events.EXIT)
+        end_menu.mainloop(self.win)
 
     def game_loop(self):
         x = self.display_width / 2
@@ -132,7 +152,9 @@ class SnakeGame:
             else:
                 snake_body.pop()
 
-
+            # Check collision with body segments
+            if snake_position in snake_body[1:]:
+                self.show_end_screen(game_score)
 
             if isclose(snake_position[0], collision_obj_position[0], abs_tol=(snake_width - 10)) and \
                     isclose(snake_position[1], collision_obj_position[1], abs_tol=(snake_height - 10)):
